@@ -11,7 +11,8 @@ namespace Castle.DynamicProxy.Extensions.Test
         public void InterceptorTest()
         {
             IServiceCollection services = new ServiceCollection();
-            services.AddTransient<IFoo, Foo>();
+            services.AddTransient<IFoo, Foo>()
+                .AddSingleton(new FooConfig { Name = "redis" });
             IServiceProvider serviceProvider = services.BuildCastleDynamicProxyProvider();
             IFoo foo = serviceProvider.GetService<IFoo>();
             bool addFlag = foo.Add(new FooModel { Id =1, Name = "test",Date = DateTime.Now });

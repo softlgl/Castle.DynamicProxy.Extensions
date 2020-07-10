@@ -18,7 +18,7 @@ namespace Castle.DynamicProxy.Extensions
         }
         public void Intercept(IInvocation invocation)
         {
-            var methondInterceptorAttributes = _methodFilters.GetOrAdd($"{invocation.TargetType.DeclaringType.FullName}#{invocation.Method.Name}",key => {
+            var methondInterceptorAttributes = _methodFilters.GetOrAdd($"{invocation.TargetType.FullName}#{invocation.MethodInvocationTarget.Name}",key => {
                 var methondAttributes = invocation.MethodInvocationTarget.GetCustomAttributes(true)
                     .Where(i => typeof(AbstractInterceptorAttribute).IsAssignableFrom(i.GetType()))
                     .Cast<AbstractInterceptorAttribute>().ToList();
