@@ -15,8 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Castle.DynamicProxy.Extensions\Castle.DynamicProxy.Extensions.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ServiceClass\" />
+    <ProjectReference Include="..\TestCommon\TestCommon.csproj" />
   </ItemGroup>
 </Project>

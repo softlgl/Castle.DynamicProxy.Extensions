@@ -16,19 +16,26 @@ namespace Castle.DynamicProxy.Extensions
             IServiceCollection dynamciServices = new ServiceCollection();
             foreach (ServiceDescriptor item in services)
             {
-                Func<IServiceProvider, object> factory = serviceProvider =>
+                if ((item.ServiceType.IsGenericType && item.ServiceType.Name.Contains("IOption"))
+                    || (item.ServiceType.IsGenericType && item.ServiceType.Name.Contains("ILogger")))
                 {
-                    var target = oldProvider.GetService(item.ServiceType);
-                    var targetType = target.GetType();
-                    var anyAttribute = targetType.GetCustomAttributes(true).Any(i => typeof(AbstractInterceptorAttribute).IsAssignableFrom(i.GetType()))
-                    && targetType.GetMethods().Any(i=>i.GetCustomAttributes(true).Any(i => typeof(AbstractInterceptorAttribute).IsAssignableFrom(i.GetType())));
-                    if (anyAttribute)
+                    dynamciServices.Add(item);
+                    continue;
+                }
+                var target = oldProvider.GetService(item.ServiceType);
+                var targetType = target.GetType();
+                var anyAttribute = targetType.GetCustomAttributes(true).Any(i => typeof(AbstractInterceptorAttribute).IsAssignableFrom(i.GetType()))
+                && targetType.GetMethods().Any(i => i.GetCustomAttributes(true).Any(i => typeof(AbstractInterceptorAttribute).IsAssignableFrom(i.GetType())));
+                if (anyAttribute)
+                {
+                    Func<IServiceProvider, object> factory = serviceProvider =>
                     {
                         return proxyGenerator.CreateInterfaceProxyWithTarget(item.ServiceType, target, new AbstractInterceptor(dynamicProvider));
-                    }
-                    return target;
-                };
-                dynamciServices.Add(ServiceDescriptor.Describe(item.ServiceType, factory, item.Lifetime));
+                    };
+                    dynamciServices.Add(ServiceDescriptor.Describe(item.ServiceType, factory, item.Lifetime));
+                    continue;
+                }
+                dynamciServices.Add(item);
             }
             return dynamicProvider = dynamciServices.BuildServiceProvider();
         }
