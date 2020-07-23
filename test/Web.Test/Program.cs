@@ -22,6 +22,7 @@ namespace Web.Test
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }).UseServiceProviderFactory(new CastleDynamicProxyServiceProviderFactory());
+                })
+                .UseServiceProviderFactory(new CastleDynamicProxyServiceProviderFactory());
     }
 }
