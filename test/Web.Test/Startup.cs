@@ -16,6 +16,7 @@ namespace Web.Test
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IFoo, Foo>()
+                .AddTransient<IBar, Bar>()
                 .AddSingleton(new FooConfig { Name = "redis" });
         }
 
