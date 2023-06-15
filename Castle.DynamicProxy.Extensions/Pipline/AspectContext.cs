@@ -14,5 +14,7 @@ namespace Castle.DynamicProxy.Extensions.Pipline
         public abstract object Implementation { get; }
 
         public abstract object Proxy { get; }
+
+        public abstract IServiceProvider ServiceProvider { get; }
     }
 }
