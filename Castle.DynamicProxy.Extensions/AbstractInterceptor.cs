@@ -12,7 +12,7 @@ namespace Castle.DynamicProxy.Extensions
     public class AbstractInterceptor : IInterceptor
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly ConcurrentDictionary<string, List<AbstractInterceptorAttribute>> _methodFilters = new ConcurrentDictionary<string, List<AbstractInterceptorAttribute>>();
+        private readonly ConcurrentDictionary<string, IEnumerable<AbstractInterceptorAttribute>> _methodFilters = new ConcurrentDictionary<string, IEnumerable<AbstractInterceptorAttribute>>();
 
         public AbstractInterceptor(IServiceProvider serviceProvider)
         {
@@ -23,17 +23,15 @@ namespace Castle.DynamicProxy.Extensions
         {
             var methondInterceptorAttributes = _methodFilters.GetOrAdd($"{invocation.MethodInvocationTarget.DeclaringType.FullName}#{invocation.MethodInvocationTarget.Name}", key => {
                 var methondAttributes = invocation.MethodInvocationTarget.GetCustomAttributes(typeof(AbstractInterceptorAttribute), true)
-                .Cast<AbstractInterceptorAttribute>().ToList();
-
+                .Cast<AbstractInterceptorAttribute>();
                 var classInterceptorAttributes = invocation.MethodInvocationTarget.DeclaringType.GetCustomAttributes(typeof(AbstractInterceptorAttribute), true)
-                    .Cast<AbstractInterceptorAttribute>();
+                .Cast<AbstractInterceptorAttribute>();
 
-                methondAttributes.AddRange(classInterceptorAttributes);
-
+                var allInterceptorAttributes = methondAttributes.Concat(classInterceptorAttributes);
                 //属性注入
-                PropertyInject.PropertiesInject(_serviceProvider, methondAttributes);
+                PropertyInject.PropertiesInject(_serviceProvider, allInterceptorAttributes);
 
-                return methondAttributes;
+                return allInterceptorAttributes;
             });
 
             if (methondInterceptorAttributes.Any())
