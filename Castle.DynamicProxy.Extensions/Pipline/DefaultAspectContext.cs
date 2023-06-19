@@ -17,6 +17,8 @@ namespace Castle.DynamicProxy.Extensions.Pipline
 
         public override object[] Parameters => _invocation.Arguments;
 
+        public override MethodInfo Method => _invocation.Method;
+
         public override MethodInfo ImplementationMethod => _invocation.MethodInvocationTarget;
 
         public override object Implementation => _invocation.InvocationTarget;

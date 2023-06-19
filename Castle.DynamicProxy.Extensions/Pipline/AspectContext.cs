@@ -9,6 +9,8 @@ namespace Castle.DynamicProxy.Extensions.Pipline
 
         public abstract object[] Parameters { get; }
 
+        public abstract MethodInfo Method { get; }
+
         public abstract MethodInfo ImplementationMethod { get; }
 
         public abstract object Implementation { get; }
