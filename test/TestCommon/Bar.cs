@@ -1,24 +1,32 @@
 ﻿using System;
+using System.Threading.Tasks;
+
 namespace Castle.DynamicProxy.Extensions.Test.ServiceClass
 {
     [Logger]
     public class Bar : IBar
     {
-        public bool Add(FooModel fooModel)
+        public ValueTask<bool> AddAsync(FooModel fooModel)
         {
-            return true;
+            return new ValueTask<bool>(true);
         }
 
-        public void Delete(int id)
+        [Limit]
+        public ValueTask DeleteAsync(int id)
         {
-            
+            return new ValueTask();
         }
 
-        //[Limit]
+        public Task EditAsync(int id)
+        {
+            return Task.CompletedTask;
+        }
+
+        [Limit]
         [Cache]
-        public FooModel Get(int id)
+        public Task<FooModel> GetAsync(int id)
         {
-            return new FooModel { Id = id, Name = "foo" + id, Date = DateTime.Now };
+            return Task.FromResult(new FooModel { Id = id, Name = "foo" + id, Date = DateTime.Now });
         }
     }
 }

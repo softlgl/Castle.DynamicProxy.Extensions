@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Castle.DynamicProxy.Extensions.Test.ServiceClass
 {
-    //[Logger]
+    [Logger]
     public class Foo : IFoo
     {
         private readonly IBar _bar;
@@ -9,22 +9,24 @@ namespace Castle.DynamicProxy.Extensions.Test.ServiceClass
         {
             _bar = bar;
         }
+
         public bool Add(FooModel fooModel)
         {
-            _bar.Add(fooModel);
+            _bar.AddAsync(fooModel).GetAwaiter().GetResult();
             return true;
         }
 
+        [Limit]
         public void Delete(int id)
         {
             
         }
 
-        [Limit]
-        //[Cache]
+        //[Limit]
+        [Cache]
         public FooModel Get(int id)
         {
-            _bar.Get(id);
+            _bar.GetAsync(id).GetAwaiter().GetResult();
             return new FooModel { Id = id, Name = "foo" + id, Date = DateTime.Now };
         }
     }
