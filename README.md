@@ -3,7 +3,7 @@
 
 ## 使用方式 
 ### 控制台程序
-```cs
+```csharp
  IServiceCollection services = new ServiceCollection();
             services.AddTransient<IFoo, Foo>()
                 .AddSingleton(new FooConfig { Name = "redis" });
@@ -15,7 +15,7 @@
             FooModel fooModel = foo.Get(1);
 ```
 ### Web程序
-```cs
+```csharp
 public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -25,7 +25,7 @@ public static IHostBuilder CreateHostBuilder(string[] args) =>
                 .UseServiceProviderFactory(new CastleDynamicProxyServiceProviderFactory());
 ```
 ### 定义拦截
-```cs
+```csharp
 public class CacheAttribute : AbstractInterceptorAttribute
 {
     [FromServices]
@@ -39,3 +39,41 @@ public class CacheAttribute : AbstractInterceptorAttribute
     }
 }
  ```
+### 业务类
+```csharp
+public interface IFoo
+{
+    bool Add(FooModel fooModel);
+    FooModel Get(int id);
+    void Delete (int id);
+}
+```
+```csharp
+[Logger]
+public class Foo : IFoo
+{
+    private readonly IBar _bar;
+    public Foo(IBar bar)
+    {
+        _bar = bar;
+    }
+    public bool Add(FooModel fooModel)
+    {
+        _bar.Add(fooModel);
+        return true;
+    }
+
+    public void Delete(int id)
+    {
+        
+    }
+
+    [Limit]
+    [Cache]
+    public FooModel Get(int id)
+    {
+        _bar.Get(id);
+        return new FooModel { Id = id, Name = "foo" + id, Date = DateTime.Now };
+    }
+}
+```
