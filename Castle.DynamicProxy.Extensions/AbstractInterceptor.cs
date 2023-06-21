@@ -50,6 +50,8 @@ namespace Castle.DynamicProxy.Extensions
                 });
 
                 aspectDelegate.Invoke(aspectContext).GetAwaiter().GetResult();
+                invocation.ReturnValue = aspectContext.ReturnValue;
+
                 return;
             }
 

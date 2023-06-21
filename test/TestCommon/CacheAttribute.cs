@@ -30,6 +30,14 @@ namespace Castle.DynamicProxy.Extensions.Test.ServiceClass
                 {
                     var returnValue = TaskUtils.CreateFuncToGetTaskResult(returnValueType).Invoke(context.ReturnValue);
                     Debug.WriteLine($"CacheAttribute执行[{context.Method.Name}]后,returnValue=[{returnValue}]");
+                    if (returnValue is FooModel model)
+                    {
+                        FooModel fooModel = new FooModel
+                        {
+                            Name = "张三"
+                        };
+                        context.ReturnValue = Task.FromResult(fooModel);
+                    }
                     return;
                 }
 
@@ -38,7 +46,6 @@ namespace Castle.DynamicProxy.Extensions.Test.ServiceClass
                     await TaskUtils.ValueTaskWithResultToTask(context.ReturnValue, returnValueType);
                     var returnValue = TaskUtils.CreateFuncToGetTaskResult(returnValueType).Invoke(context.ReturnValue);
                     Debug.WriteLine($"CacheAttribute执行[{context.Method.Name}]后,returnValue=[{returnValue}]");
-
                     return;
                 }
                 Debug.WriteLine($"CacheAttribute执行[{context.Method.Name}]后,returnValue=[{context.ReturnValue}]");
